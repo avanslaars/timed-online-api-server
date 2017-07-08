@@ -1,6 +1,7 @@
 'use strict'
 const Hapi = require('hapi')
 const {saveCommand, loadCommand} = require('./services')
+const {getStandardDeviationOfRuns, getAverageOfRuns} = require('./utils')
 
 const server = new Hapi.Server()
 
@@ -29,8 +30,11 @@ server.route([{
   handler: function (request, reply) {
     const cmd = request.params.cmd
     loadCommand(cmd)
-      .then(console.log)
-      .then(() => reply())
+      .then(runs => ({
+        avg: getAverageOfRuns(runs),
+        dev: getStandardDeviationOfRuns(runs)
+      }))
+      .then(reply)
   }
 }])
 
