@@ -1,5 +1,6 @@
 'use strict'
 const Hapi = require('hapi')
+const {saveCommand} = require('./services')
 
 const server = new Hapi.Server()
 
@@ -18,8 +19,9 @@ server.route([{
   method: 'POST',
   path: '/command',
   handler: function (request, reply) {
-    console.log(request.payload)
-    reply('payload received')
+    const {name, time} = request.payload
+    saveCommand(name, time)
+      .then(res => reply())
   }
 }])
 
