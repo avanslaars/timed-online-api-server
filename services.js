@@ -9,6 +9,12 @@ const saveCommand = (cmd, time) => {
     .then(({data}) => data)
 }
 
+const loadCommand = (cmd) => {
+  return axios.get(`${firebaseRoot}/commands/${encodeURIComponent(cmd)}/runs.json`)
+    .then(({data}) => data)
+}
+
 module.exports = {
-  saveCommand
+  saveCommand,
+  loadCommand
 }
