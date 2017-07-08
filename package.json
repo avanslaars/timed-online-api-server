@@ -1,0 +1,16 @@
+{
+  "name": "timed-online-server",
+  "version": "1.0.0",
+  "description": "API Server for the timed-online npm package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:avanslaars/timed-online-api-server.git"
+  },
+  "keywords": [],
+  "author": "Andrew Van Slaars",
+  "license": "MIT"
+}
