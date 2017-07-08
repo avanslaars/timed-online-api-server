@@ -1,7 +1,8 @@
 'use strict'
 const Hapi = require('hapi')
-const {saveCommand, loadCommand} = require('./services')
-const {getStandardDeviationOfRuns, getAverageOfRuns} = require('./utils')
+const vision = require('vision')
+const handlebars = require('handlebars')
+const routes = require('./routes')
 
 const server = new Hapi.Server()
 
@@ -10,37 +11,23 @@ server.connection({
   port: 8000
 })
 
-server.route([{
-  method: 'GET',
-  path: '/',
-  handler: function (request, reply) {
-    return reply('hello world')
-  }
-}, {
-  method: 'POST',
-  path: '/command',
-  handler: function (request, reply) {
-    const {name, time} = request.payload
-    saveCommand(name, time)
-      .then(res => reply())
-  }
-}, {
-  method: 'GET',
-  path: '/command/{cmd}',
-  handler: function (request, reply) {
-    const cmd = request.params.cmd
-    loadCommand(cmd)
-      .then(runs => ({
-        avg: getAverageOfRuns(runs),
-        dev: getStandardDeviationOfRuns(runs)
-      }))
-      .then(reply)
-  }
-}])
+const plugins = [
+  {register: vision},
+  {register: routes}
+]
 
-server.start((err) => {
-  if (err) {
-    throw err
-  }
-  console.log('Server running at:', server.info.uri)
-})
+server.register(plugins)
+  .then(err => {
+    if (err) { throw err }
+
+    server.views({
+      engines: { html: handlebars },
+      relativeTo: __dirname,
+      path: 'templates'
+    })
+
+    server.start((err) => {
+      if (err) { throw err }
+      console.log('Server running at:', server.info.uri)
+    })
+  })
