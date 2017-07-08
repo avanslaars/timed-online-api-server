@@ -1,4 +1,5 @@
 'use strict'
+const boom = require('boom')
 const {saveCommand, loadCommand} = require('./services')
 const {getStandardDeviationOfRuns, getAverageOfRuns} = require('./utils')
 
@@ -15,7 +16,8 @@ exports.register = function (server, options, next) {
     handler: function (request, reply) {
       const {name, time} = request.payload
       saveCommand(name, time)
-      .then(res => reply())
+        .then(res => reply())
+        .catch(err => reply(boom.wrap(err)))
     }
   }, {
     method: 'GET',
@@ -23,11 +25,12 @@ exports.register = function (server, options, next) {
     handler: function (request, reply) {
       const cmd = request.params.cmd
       loadCommand(cmd)
-      .then(runs => ({
-        avg: getAverageOfRuns(runs),
-        dev: getStandardDeviationOfRuns(runs)
-      }))
-      .then(reply)
+        .then(runs => ({
+          avg: getAverageOfRuns(runs),
+          dev: getStandardDeviationOfRuns(runs)
+        }))
+        .then(reply)
+        .catch(err => reply(boom.wrap(err)))
     }
   }])
   next()
